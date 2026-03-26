@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NGN Pharmacology Simulation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {font-family: Arial, sans-serif; background:#eef2f7; margin:0; padding:20px;}
+.container {max-width:900px; margin:auto; background:white; padding:25px; border-radius:12px;}
+h2 {color:#1e2a38;}
+button {display:block; width:100%; padding:12px; margin:10px 0; border:none; border-radius:8px; background:#2d6cdf; color:white; font-size:16px;}
+button:hover {background:#1b4fb3;}
+.score {background:#f1f5fb; padding:10px; border-radius:8px; margin-bottom:15px;}
+.checkbox {margin:8px 0;}
+</style>
+</head>
+
+<body>
+<div class="container" id="app"></div>
+
+<script>
+let score = 0;
+let total = 0;
+let risk = 0;
+
+function renderStart(){
+app.innerHTML = `
+<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
+<h2>NGN Pharmacology Simulation</h2>
+<p>72-year-old with fever, cough, confusion, recent chemotherapy.</p>
+
+<button onclick="case1('pen')">Penicillin</button>
+<button onclick="case1('azi')">Azithromycin</button>
+`;
+}
+
+function case1(choice){
+total += 1;
+if(choice === 'pen'){ score +=1; }
+else { risk +=1; }
+
+app.innerHTML = `
+<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
+<h2>New Findings</h2>
+<p>White patches in mouth, pain, difficulty swallowing.</p>
+
+<button onclick="superinfection()">Continue</button>
+`;
+}
+
+function superinfection(){
+app.innerHTML = `
+<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
+<h2>Select ALL concerning findings</h2>
+
+<label class="checkbox"><input type="checkbox" id="a1"> White patches</label>
+<label class="checkbox"><input type="checkbox" id="a2"> Oral pain</label>
+<label class="checkbox"><input type="checkbox" id="a3"> Difficulty swallowing</label>
+<label class="checkbox"><input type="checkbox" id="a4"> Improved appetite</label>
+
+<button onclick="gradeSuper()">Submit</button>
+`;
+}
+
+function gradeSuper(){
+let p = 0;
+if(a1.checked) p++;
+if(a2.checked) p++;
+if(a3.checked) p++;
+if(a4.checked) p--;
+p = Math.max(0,p);
+
+score += p;
+total += 3;
+
+if(p < 2) risk++;
+
+renderSJS();
+}
+
+function renderSJS(){
+app.innerHTML = `
+<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
+<h2>New Symptoms</h2>
+<p>Painful rash, blistering, mucosal involvement.</p>
+
+<button onclick="sjsDecision(true)">Stop medication</button>
+<button onclick="sjsDecision(false)">Give antihistamine</button>
+`;
+}
+
+function sjsDecision(correct){
+total += 3;
+if(correct){ score +=3; }
+else { risk +=2; }
+
+renderMultiComp();
+}
+
+function renderMultiComp(){
+app.innerHTML = `
+<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
+<h2>Select ALL complications</h2>
+
+<label><input type="checkbox" id="m1"> Oral lesions</label><br>
+<label><input type="checkbox" id="m2"> Tinnitus</label><br>
+<label><input type="checkbox" id="m3"> Elevated creatinine</label><br>
+<label><input type="checkbox" id="m4"> Normal appetite</label><br>
+
+<button onclick="gradeMulti()">Submit</button>
+`;
+}
+
+function gradeMulti(){
+let p = 0;
+if(m1.checked) p++;
+if(m2.checked) p++;
+if(m3.checked) p++;
+if(m4.checked) p--;
+p = Math.max(0,p);
+
+score += p;
+total += 4;
+
+if(p < 3) risk +=2;
+
+renderFinalDecision();
+}
+
+function renderFinalDecision(){
+app.innerHTML = `
+<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
+<h2>Priority Action</h2>
+
+<button onclick="finalDecision(true)">Hold antibiotic immediately</button>
+<button onclick="finalDecision(false)">Treat oral infection first</button>
+`;
+}
+
+function finalDecision(correct){
+total += 4;
+if(correct){ score +=4; }
+else { risk +=2; }
+
+renderSummary();
+}
+
+function renderSummary(){
+let performance = "";
+
+if(score >= total * 0.8){
+performance = "Strong clinical judgment";
+} else if(risk >=4){
+performance = "Unsafe prioritization – review required";
+} else {
+performance = "Borderline performance";
+}
+
+app.innerHTML = `
+<div class="score">Final Score: ${score}/${total} | Risk: ${risk}</div>
+
+<h2>Module Summary</h2>
+
+<p><b>${performance}</b></p>
+
+<ul>
+<li>Recognize complications early</li>
+<li>Prioritize life-threatening conditions FIRST</li>
+<li>Monitor aminoglycoside toxicity (peak/trough)</li>
+<li>Identify superinfection and severe skin reactions</li>
+</ul>
+
+<button onclick="restart()">Restart Simulation</button>
+`;
+}
+
+function restart(){
+score = 0;
+total = 0;
+risk = 0;
+renderStart();
+}
+
+const app = document.getElementById("app");
+renderStart();
+</script>
+
+</body>
+</html>
