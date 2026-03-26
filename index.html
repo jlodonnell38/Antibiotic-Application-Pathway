@@ -3,186 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <title>NGN Pharmacology Simulation</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {font-family: Arial, sans-serif; background:#eef2f7; margin:0; padding:20px;}
-.container {max-width:900px; margin:auto; background:white; padding:25px; border-radius:12px;}
-h2 {color:#1e2a38;}
-button {display:block; width:100%; padding:12px; margin:10px 0; border:none; border-radius:8px; background:#2d6cdf; color:white; font-size:16px;}
-button:hover {background:#1b4fb3;}
-.score {background:#f1f5fb; padding:10px; border-radius:8px; margin-bottom:15px;}
-.checkbox {margin:8px 0;}
+body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
+.screen { display:none; padding:30px; }
+.active { display:block; }
+button { margin:10px; padding:10px 20px; border:none; border-radius:8px; cursor:pointer; }
+.correct { background:#16a34a; }
+.incorrect { background:#dc2626; }
+#scoreboard { position:fixed; top:10px; right:20px; }
+.rationale { margin-top:20px; padding:10px; border-radius:8px; }
 </style>
 </head>
 
 <body>
-<div class="container" id="app"></div>
 
-<script>
-let score = 0;
-let total = 0;
-let risk = 0;
+<div id="scoreboard">
+Score: <span id="score">0</span> | Risk: <span id="risk">0</span>
+</div>
 
-function renderStart(){
-app.innerHTML = `
-<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
-<h2>NGN Pharmacology Simulation</h2>
-<p>72-year-old with fever, cough, confusion, recent chemotherapy.</p>
+<div id="start-screen" class="screen active">
+<h1>🧠 NGN Pharmacology Simulation</h1>
 
-<button onclick="case1('pen')">Penicillin</button>
-<button onclick="case1('azi')">Azithromycin</button>
-`;
-}
-
-function case1(choice){
-total += 1;
-if(choice === 'pen'){ score +=1; }
-else { risk +=1; }
-
-app.innerHTML = `
-<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
-<h2>New Findings</h2>
-<p>White patches in mouth, pain, difficulty swallowing.</p>
-
-<button onclick="superinfection()">Continue</button>
-`;
-}
-
-function superinfection(){
-app.innerHTML = `
-<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
-<h2>Select ALL concerning findings</h2>
-
-<label class="checkbox"><input type="checkbox" id="a1"> White patches</label>
-<label class="checkbox"><input type="checkbox" id="a2"> Oral pain</label>
-<label class="checkbox"><input type="checkbox" id="a3"> Difficulty swallowing</label>
-<label class="checkbox"><input type="checkbox" id="a4"> Improved appetite</label>
-
-<button onclick="gradeSuper()">Submit</button>
-`;
-}
-
-function gradeSuper(){
-let p = 0;
-if(a1.checked) p++;
-if(a2.checked) p++;
-if(a3.checked) p++;
-if(a4.checked) p--;
-p = Math.max(0,p);
-
-score += p;
-total += 3;
-
-if(p < 2) risk++;
-
-renderSJS();
-}
-
-function renderSJS(){
-app.innerHTML = `
-<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
-<h2>New Symptoms</h2>
-<p>Painful rash, blistering, mucosal involvement.</p>
-
-<button onclick="sjsDecision(true)">Stop medication</button>
-<button onclick="sjsDecision(false)">Give antihistamine</button>
-`;
-}
-
-function sjsDecision(correct){
-total += 3;
-if(correct){ score +=3; }
-else { risk +=2; }
-
-renderMultiComp();
-}
-
-function renderMultiComp(){
-app.innerHTML = `
-<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
-<h2>Select ALL complications</h2>
-
-<label><input type="checkbox" id="m1"> Oral lesions</label><br>
-<label><input type="checkbox" id="m2"> Tinnitus</label><br>
-<label><input type="checkbox" id="m3"> Elevated creatinine</label><br>
-<label><input type="checkbox" id="m4"> Normal appetite</label><br>
-
-<button onclick="gradeMulti()">Submit</button>
-`;
-}
-
-function gradeMulti(){
-let p = 0;
-if(m1.checked) p++;
-if(m2.checked) p++;
-if(m3.checked) p++;
-if(m4.checked) p--;
-p = Math.max(0,p);
-
-score += p;
-total += 4;
-
-if(p < 3) risk +=2;
-
-renderFinalDecision();
-}
-
-function renderFinalDecision(){
-app.innerHTML = `
-<div class="score">Score: ${score}/${total} | Risk: ${risk}</div>
-<h2>Priority Action</h2>
-
-<button onclick="finalDecision(true)">Hold antibiotic immediately</button>
-<button onclick="finalDecision(false)">Treat oral infection first</button>
-`;
-}
-
-function finalDecision(correct){
-total += 4;
-if(correct){ score +=4; }
-else { risk +=2; }
-
-renderSummary();
-}
-
-function renderSummary(){
-let performance = "";
-
-if(score >= total * 0.8){
-performance = "Strong clinical judgment";
-} else if(risk >=4){
-performance = "Unsafe prioritization – review required";
-} else {
-performance = "Borderline performance";
-}
-
-app.innerHTML = `
-<div class="score">Final Score: ${score}/${total} | Risk: ${risk}</div>
-
-<h2>Module Summary</h2>
-
-<p><b>${performance}</b></p>
-
+<h2>Objectives</h2>
 <ul>
-<li>Recognize complications early</li>
-<li>Prioritize life-threatening conditions FIRST</li>
-<li>Monitor aminoglycoside toxicity (peak/trough)</li>
-<li>Identify superinfection and severe skin reactions</li>
+<li>Apply antibiotic pharmacology concepts</li>
+<li>Recognize complications and toxicity</li>
+<li>Make safe clinical decisions</li>
 </ul>
 
-<button onclick="restart()">Restart Simulation</button>
-`;
+<h2>Directions</h2>
+<p>Select the best answer. Some increase patient risk.</p>
+
+<button onclick="startGame()">Start</button>
+</div>
+
+<div id="case1" class="screen">
+<h2>Patient Scenario</h2>
+<p>Patient on antibiotics develops prolonged QT.</p>
+
+<button onclick="correctChoice()">Check ECG</button>
+<button onclick="wrongChoice()">Ignore ECG</button>
+
+<div id="feedback"></div>
+</div>
+
+<div id="final" class="screen">
+<h2>Simulation Complete</h2>
+<p>Score: <span id="finalScore"></span></p>
+<p>Risk: <span id="finalRisk"></span></p>
+<button onclick="location.reload()">Restart</button>
+</div>
+
+<script>
+let score=0, risk=0;
+
+function updateScore(){
+document.getElementById('score').innerText=score;
+document.getElementById('risk').innerText=risk;
 }
 
-function restart(){
-score = 0;
-total = 0;
-risk = 0;
-renderStart();
+function startGame(){
+document.getElementById('start-screen').classList.remove('active');
+document.getElementById('case1').classList.add('active');
 }
 
-const app = document.getElementById("app");
-renderStart();
+function correctChoice(){
+score+=2;
+updateScore();
+showRationale("✔️ Correct: ECG monitoring prevents dysrhythmias.", true);
+setTimeout(endGame,1500);
+}
+
+function wrongChoice(){
+risk+=2;
+updateScore();
+showRationale("❌ Incorrect: Missing QT prolongation is dangerous.", false);
+setTimeout(endGame,1500);
+}
+
+function showRationale(text, good){
+let box=document.getElementById('feedback');
+box.innerHTML=text;
+box.className="rationale " + (good ? "correct":"incorrect");
+}
+
+function endGame(){
+document.getElementById('case1').classList.remove('active');
+document.getElementById('final').classList.add('active');
+document.getElementById('finalScore').innerText=score;
+document.getElementById('finalRisk').innerText=risk;
+}
 </script>
 
 </body>
